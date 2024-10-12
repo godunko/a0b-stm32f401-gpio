@@ -14,6 +14,7 @@ with A0B.ARMv7M.NVIC_Utilities; use A0B.ARMv7M.NVIC_Utilities;
 with A0B.STM32F401.GPIO.Configuration;
 with A0B.STM32F401.SVD.EXTI;    use A0B.STM32F401.SVD.EXTI;
 with A0B.STM32F401.SVD.GPIO;    use A0B.STM32F401.SVD.GPIO;
+with A0B.STM32F401.SVD.RCC;     use A0B.STM32F401.SVD.RCC;
 with A0B.STM32F401.SVD.SYSCFG;  use A0B.STM32F401.SVD.SYSCFG;
 with A0B.Types.GCC_Builtins;    use A0B.Types.GCC_Builtins;
 
@@ -56,8 +57,8 @@ package body A0B.STM32F401.GPIO is
 
    procedure EXTI_Handler (Pending_Mask : A0B.Types.Unsigned_32);
 
-   --  procedure Enable_Clock (Self : in out GPIO_Controller);
-   --  --  Enable clock of the given GPIO controller.
+   procedure Enable_Clock (Self : in out GPIO_Controller);
+   --  Enable clock of the given GPIO controller.
 
    procedure Set_Pull_Mode
      (Self : aliased in out GPIO_Line'Class;
@@ -82,7 +83,7 @@ package body A0B.STM32F401.GPIO is
       Speed : Output_Speed := Low;
       Pull  : Pull_Mode    := No) is
    begin
-      --  Enable_Clock (Self.Controller.all);
+      Enable_Clock (Self.Controller.all);
 
       for Descriptor of Configuration.AF (Line) loop
          if Descriptor.Controller = Self.Controller.Identifier
@@ -138,8 +139,7 @@ package body A0B.STM32F401.GPIO is
       --  Configure IO line in input mode, it is required for EXTI, enable
       --  pull-up/pull-down when requested.
 
-      --  RCC_Periph.APB4ENR.SYSCFGEN := True;
-      --  Data_Synchronization_Barrier;
+      RCC_Periph.APB2ENR.SYSCFGEN := True;
       --  Enable clock of the SYSCFG controller.
 
       --  Select GPIO controller to be used to generate external interrupt.
@@ -187,7 +187,7 @@ package body A0B.STM32F401.GPIO is
      (Self : aliased in out GPIO_Line'Class;
       Pull : Pull_Mode := No) is
    begin
-      --  Enable_Clock (Self.Controller.all);
+      Enable_Clock (Self.Controller.all);
 
       Self.Set_Pull_Mode (Pull);
 
@@ -206,7 +206,7 @@ package body A0B.STM32F401.GPIO is
       Speed : Output_Speed := Low;
       Pull  : Pull_Mode    := No) is
    begin
-      --  Enable_Clock (Self.Controller.all);
+      Enable_Clock (Self.Controller.all);
 
       Self.Set_Output_Mode (Mode);
       Self.Set_Output_Speed (Speed);
@@ -282,49 +282,32 @@ package body A0B.STM32F401.GPIO is
       end if;
    end Disable_Interrupt;
 
-   --  ------------------
-   --  -- Enable_Clock --
-   --  ------------------
-   --
-   --  procedure Enable_Clock (Self : in out GPIO_Controller) is
-   --  begin
-   --     case Self.Identifier is
-   --        when A =>
-   --           RCC_Periph.AHB4ENR.GPIOAEN := True;
-   --
-   --        when B =>
-   --           RCC_Periph.AHB4ENR.GPIOBEN := True;
-   --
-   --        when C =>
-   --           RCC_Periph.AHB4ENR.GPIOCEN := True;
-   --
-   --        when D =>
-   --           RCC_Periph.AHB4ENR.GPIODEN := True;
-   --
-   --        when E =>
-   --           RCC_Periph.AHB4ENR.GPIOEEN := True;
-   --
-   --        when F =>
-   --           RCC_Periph.AHB4ENR.GPIOFEN := True;
-   --
-   --        when G =>
-   --           RCC_Periph.AHB4ENR.GPIOGEN := True;
-   --
-   --        when H =>
-   --           RCC_Periph.AHB4ENR.GPIOHEN := True;
-   --
-   --        when J =>
-   --           RCC_Periph.AHB4ENR.GPIOJEN := True;
-   --
-   --        when K =>
-   --           RCC_Periph.AHB4ENR.GPIOKEN := True;
-   --
-   --        when others =>
-   --           raise Program_Error;
-   --     end case;
-   --
-   --     Data_Synchronization_Barrier;
-   --  end Enable_Clock;
+   ------------------
+   -- Enable_Clock --
+   ------------------
+
+   procedure Enable_Clock (Self : in out GPIO_Controller) is
+   begin
+      case Self.Identifier is
+         when A =>
+            RCC_Periph.AHB1ENR.GPIOAEN := True;
+
+         when B =>
+            RCC_Periph.AHB1ENR.GPIOBEN := True;
+
+         when C =>
+            RCC_Periph.AHB1ENR.GPIOCEN := True;
+
+         when D =>
+            RCC_Periph.AHB1ENR.GPIODEN := True;
+
+         when E =>
+            RCC_Periph.AHB1ENR.GPIOEEN := True;
+
+         when H =>
+            RCC_Periph.AHB1ENR.GPIOHEN := True;
+      end case;
+   end Enable_Clock;
 
    ----------------------
    -- Enable_Interrupt --
