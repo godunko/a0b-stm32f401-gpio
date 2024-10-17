@@ -10,7 +10,6 @@ with A0B.Callbacks;
 with A0B.EXTI;
 with A0B.GPIO;
 with A0B.STM32F401.SVD.GPIO;
-private with A0B.Types;
 
 package A0B.STM32F401.GPIO
   with Preelaborate
@@ -70,23 +69,5 @@ is
      (Peripheral : not null access A0B.STM32F401.SVD.GPIO.GPIO_Peripheral;
       Identifier : GPIO_Controller_Identifier) is
         limited null record;
-
-private
-
-   subtype GPIO_Alternative_Function is A0B.Types.Unsigned_4;
-
-   type Line_Descriptor (Supported : Boolean := False) is record
-      case Supported is
-         when False =>
-            null;
-
-         when True =>
-            Controller           : GPIO_Controller_Identifier;
-            Line                 : GPIO_Line_Identifier;
-            Alternative_Function : GPIO_Alternative_Function;
-      end case;
-   end record with Pack;
-
-   type Line_Descriptor_Array is array (0 .. 2) of Line_Descriptor with Pack;
 
 end A0B.STM32F401.GPIO;
