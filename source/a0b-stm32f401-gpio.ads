@@ -47,7 +47,8 @@ is
       Line  : A0B.STM32F401.Function_Line_Descriptor;
       Mode  : Output_Mode  := Push_Pull;
       Speed : Output_Speed := Low;
-      Pull  : Pull_Mode    := No);
+      Pull  : Pull_Mode    := No)
+     with Pre => Is_Supported (Self, Line);
 
    procedure Configure_EXTI
      (Self : aliased in out GPIO_Line'Class;
@@ -69,5 +70,19 @@ is
      (Peripheral : not null access A0B.STM32F401.SVD.GPIO.GPIO_Peripheral;
       Identifier : GPIO_Controller_Identifier) is
         limited null record;
+
+   function Is_Supported
+     (Self : GPIO_Line'Class;
+      Line : A0B.STM32F401.Function_Line_Descriptor) return Boolean;
+   --  Returns True when given IO line supports given function line.
+
+private
+
+   function Is_Supported
+     (Self : GPIO_Line'Class;
+      Line : A0B.STM32F401.Function_Line_Descriptor) return Boolean is
+     (for some Configuration of Line =>
+         Configuration.Controller = Self.Controller.Identifier
+           and Configuration.Line = Self.Identifier);
 
 end A0B.STM32F401.GPIO;
