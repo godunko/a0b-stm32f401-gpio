@@ -11,7 +11,6 @@ pragma Ada_2022;
 with Ada.Unchecked_Conversion;
 
 with A0B.ARMv7M.NVIC_Utilities; use A0B.ARMv7M.NVIC_Utilities;
-with A0B.STM32F401.GPIO.Configuration;
 with A0B.STM32F401.SVD.EXTI;    use A0B.STM32F401.SVD.EXTI;
 with A0B.STM32F401.SVD.GPIO;    use A0B.STM32F401.SVD.GPIO;
 with A0B.STM32F401.SVD.RCC;     use A0B.STM32F401.SVD.RCC;
@@ -78,14 +77,14 @@ package body A0B.STM32F401.GPIO is
 
    procedure Configure_Alternative_Function
      (Self  : aliased in out GPIO_Line'Class;
-      Line  : Function_Line;
+      Line  : A0B.STM32F401.Function_Line_Descriptor;
       Mode  : Output_Mode  := Push_Pull;
       Speed : Output_Speed := Low;
       Pull  : Pull_Mode    := No) is
    begin
       Enable_Clock (Self.Controller.all);
 
-      for Descriptor of Configuration.AF (Line) loop
+      for Descriptor of Line loop
          if Descriptor.Controller = Self.Controller.Identifier
            and Descriptor.Line = Self.Identifier
          then
@@ -96,12 +95,14 @@ package body A0B.STM32F401.GPIO is
             if Self.Identifier < 8 then
                Self.Controller.Peripheral.AFRL.Arr
                  (Integer (Self.Identifier)) :=
-                   Descriptor.Alternative_Function;
+                   A0B.STM32F401.SVD.GPIO.AFRL_Element
+                     (Descriptor.Alternative_Function);
 
             else
                Self.Controller.Peripheral.AFRH.Arr
                  (Integer (Self.Identifier)) :=
-                   Descriptor.Alternative_Function;
+                   A0B.STM32F401.SVD.GPIO.AFRL_Element
+                     (Descriptor.Alternative_Function);
             end if;
 
             Self.Controller.Peripheral.MODER.Arr

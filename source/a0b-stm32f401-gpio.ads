@@ -18,13 +18,6 @@ is
 
    type GPIO_Controller;
 
-   type GPIO_Controller_Identifier is (A, B, C, D, E, H)
-     with Size => 4;
-   for GPIO_Controller_Identifier use
-     (A => 0, B => 1, C => 2, D => 3, E => 4, H => 7);
-
-   type GPIO_Line_Identifier is range 0 .. 15;
-
    type Pull_Mode is (No, Pull_Up, Pull_Down);
 
    type Output_Mode is (Push_Pull, Open_Drain);
@@ -52,7 +45,7 @@ is
 
    procedure Configure_Alternative_Function
      (Self  : aliased in out GPIO_Line'Class;
-      Line  : Function_Line;
+      Line  : A0B.STM32F401.Function_Line_Descriptor;
       Mode  : Output_Mode  := Push_Pull;
       Speed : Output_Speed := Low;
       Pull  : Pull_Mode    := No);
