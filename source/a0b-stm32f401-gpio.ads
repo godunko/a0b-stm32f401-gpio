@@ -1,5 +1,5 @@
 --
---  Copyright (C) 2024, Vadim Godunko <vgodunko@gmail.com>
+--  Copyright (C) 2024-2025, Vadim Godunko <vgodunko@gmail.com>
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
@@ -49,6 +49,8 @@ is
       Speed : Output_Speed := Low;
       Pull  : Pull_Mode    := No)
      with Pre => Is_Supported (Self, Line);
+
+   procedure Configure_Analog (Self : aliased in out GPIO_Line'Class);
 
    procedure Configure_EXTI
      (Self : aliased in out GPIO_Line'Class;

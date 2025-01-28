@@ -1,5 +1,5 @@
 --
---  Copyright (C) 2024, Vadim Godunko <vgodunko@gmail.com>
+--  Copyright (C) 2024-2025, Vadim Godunko <vgodunko@gmail.com>
 --
 --  SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 --
@@ -115,6 +115,19 @@ package body A0B.STM32F401.GPIO is
 
       raise Program_Error;
    end Configure_Alternative_Function;
+
+   ----------------------
+   -- Configure_Analog --
+   ----------------------
+
+   procedure Configure_Analog (Self : aliased in out GPIO_Line'Class) is
+   begin
+      Enable_Clock (Self.Controller.all);
+
+      Self.Controller.Peripheral.MODER.Arr
+        (Integer (Self.Identifier)) := 2#11#;
+      --  Analog mode
+   end Configure_Analog;
 
    --------------------
    -- Configure_EXTI --
